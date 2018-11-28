@@ -175,8 +175,36 @@ def main():
     # Empty Line
     print()
 
-    
 
+    #Calculating p and q
+    p = -1
+    q = -1
+    #Assigning p
+    if is_prime(n):
+        p = n
+    else: #For the case that earlier calculated prime n is not actually a prime after testing for 20 a's
+        while True:
+            n = random_num_7bit()
+            if is_prime(n):
+                p = n
+                break
+    
+    print("p:",p)
+    #Assigning q
+    while True:
+        n = random_num_7bit()
+        if is_prime(n):
+            q = n
+            if q != p: #Checking that p and q are not equal
+                break
+    
+    print("q",q)
+    #Calculating n
+    n = p*q
+    print("n:",n)
+    #Calculating phi(n)
+    phi_n = (p-1)*(q-1)
+    print("phi(n):",phi_n)
 
 
 
