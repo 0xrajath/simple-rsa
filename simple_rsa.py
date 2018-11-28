@@ -49,6 +49,7 @@ def primality_testing(n,a):
     else:
         return True
 
+# Function to check if Prime using 20 rounds of Miller-Rabin
 def is_prime(n):
     for i in range(20):
         a = get_a(n)
@@ -57,6 +58,63 @@ def is_prime(n):
             return False
     # It is Prime if it passes for 20 a's
     return True
+
+# Extended Euclidean Algorithm to get Multiplicative Inverse and GCD
+def extended_euclidean_algorithm(bigger_num, smaller_num):
+    ri = bigger_num
+    ri_1 = smaller_num
+    ri_2 = -1
+
+    qi = -1
+    qi_1 = -1
+    qi_2 = -1
+
+    si = -1
+    si_1 = -1
+    si_2 = -1
+
+    ti = -1
+    ti_1 = -1
+    ti_2 = -1
+
+    i = 1
+
+    while True:
+        if i == 1:
+            si_2 = 1
+            si = 1
+
+            ti_2 = 0
+            ti = 0
+        elif i == 2:
+            qi_1 = qi
+
+            si_1 = 0
+            si = 0
+
+            ti_1 = 1
+            ti = 1
+        else:
+            qi_2 = qi_1
+            qi_1 = qi
+
+            si = si_2 - (qi_2*si_1)
+            si_2 = si_1
+            si_1 = si
+
+            ti = ti_2 - (qi_2*ti_1)
+            ti_2 = ti_1
+            ti_1 = ti
+
+        if ri_1 == 0:
+            return ti,ri #Return (Multiplicative Inverse, GCD)
+
+        qi = int(ri/ri_1)
+        ri_2 = ri%ri_1
+
+        i+=1
+        ri = ri_1
+        ri_1 = ri_2
 
 
 def main():
@@ -205,6 +263,72 @@ def main():
     #Calculating phi(n)
     phi_n = (p-1)*(q-1)
     print("phi(n):",phi_n)
+
+
+    # Extended Euclidean Algorithm
+    ri = 5904
+    ri_1 = 5
+    ri_2 = -1
+
+    qi = -1
+    qi_1 = -1
+    qi_2 = -1
+
+    si = -1
+    si_1 = -1
+    si_2 = -1
+
+    ti = -1
+    ti_1 = -1
+    ti_2 = -1
+
+    i = 1
+
+    print("i |qi |r |ri+1 |ri+2 |si |ti")
+    while True:
+        if i == 1:
+            si_2 = 1
+            si = 1
+
+            ti_2 = 0
+            ti = 0
+        elif i == 2:
+            qi_1 = qi
+
+            si_1 = 0
+            si = 0
+
+            ti_1 = 1
+            ti = 1
+        else:
+            qi_2 = qi_1
+            qi_1 = qi
+
+            si = si_2 - (qi_2*si_1)
+            si_2 = si_1
+            si_1 = si
+
+            ti = ti_2 - (qi_2*ti_1)
+            ti_2 = ti_1
+            ti_1 = ti
+
+        if ri_1 == 0:
+            print(str(i)+" |  |"+str(ri)+" |  |  |"+str(si)+" |"+str(ti))
+            break
+
+        qi = int(ri/ri_1)
+        ri_2 = ri%ri_1
+        print(str(i)+" |"+str(qi)+" |"+str(ri)+" |"+str(ri_1)+" |"+str(ri_2)+" |"+str(si)+" |"+str(ti))
+
+        i+=1
+        ri = ri_1
+        ri_1 = ri_2
+
+
+    print()
+    mi,gcd = extended_euclidean_algorithm(4620,13)
+    print(mi,gcd)
+
 
 
 
