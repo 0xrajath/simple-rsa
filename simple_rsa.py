@@ -28,6 +28,21 @@ def get_a(n):
     return random.randint(1,n-1)
 
 
+# Fast Exponentiation
+def fast_exponentiation(n,a,x):
+    k = len(bin(x))-3
+    y = 1
+
+    j=2
+    for i in range(k,-1,-1):
+        xi = bin(x)[j] # Getting xi binary number
+        y = (y*y)%n
+        if xi=='1':
+            y = (y*a)%n
+        j+=1
+
+    return y
+
 # Miller-Rabin Primality Testing
 def primality_testing(n,a):
     x = n-1
@@ -172,8 +187,39 @@ def generate_rsa_keys():
                 d = mult_inv
 
     return p,q,n,e,d
+
+
+# XOR between two bytes of data
+def byte_xor(a,b):
+    s0 = str(int(a[0])^int(b[0]))
+    s1 = str(int(a[1])^int(b[1]))
+    s2 = str(int(a[2])^int(b[2]))
+    s3 = str(int(a[3])^int(b[3]))
+    s4 = str(int(a[4])^int(b[4]))
+    s5 = str(int(a[5])^int(b[5]))
+    s6 = str(int(a[6])^int(b[6]))
+    s7 = str(int(a[7])^int(b[7]))
     
-    
+    return s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7
+
+
+# Simple hash function that XOR's byte-by-byte and returns respective int value
+def hash_simple(bit_string):
+    byte_list = []
+
+    for i in range(0,len(bit_string),8):
+        byte_list.append(bit_string[i:i+8])
+
+    while len(byte_list) > 1:
+        byte_list[1] = byte_xor(byte_list[0],byte_list[1])
+        byte_list = byte_list[1:]
+
+    return int(byte_list[0], 2)
+
+
+# Decrypting or Signing 'h' with Private Key (n,d)
+def sign_w_priv_key(n,d,h):
+    return fast_exponentiation(n,h,d)
 
 
 def main():
@@ -440,6 +486,31 @@ def main():
 
     # Empty Line
     print()
+
+
+    # Using The representation for 'Alice' = 32(Space),65(A),108(l),105(i),99(c),101(e)
+    Alice = "001000000100000101101100011010010110001101100101"
+    bytes_1_6 = Alice
+    bytes_7_10 = format(n, '032b')
+    bytes_11_14 = format(e, '032b')
+
+    r = bytes_1_6 +bytes_7_10 + bytes_11_14
+    h_r = hash_simple(r)
+    s = sign_w_priv_key(nt,dt,h_r) # Signing with Trent's Private Key (nt,dt)
+    
+    # Line 207 : Alice Digital Certificate
+    print("line:207")
+    print("r = "+r)
+    print("h(r) = "+format(h_r, '032b'))
+    print("s = "+format(s, '032b'))
+
+
+    # Empty Line
+    print()
+
+    # Line 209 : Alice Digital Certificate
+    print("line:209")
+    print("h(r) = "+str(h_r)+", s = "+str(s))
 
 
 
