@@ -564,9 +564,25 @@ def main():
     print()
 
 
-    
+    # Line 242: Fast Exponentiation for computing E(e,v)
+    print("line:242")
 
+    # Fast Exponentiation
+    k = len(bin(e))-3
+    y = 1
 
+    j=2
+    print("i |xi |y |y ")
+    for i in range(k,-1,-1):
+        xi = bin(e)[j] # Getting xi binary number
+        y = (y*y)%n
+        if xi=='1':
+            y_new = (y*v)%n
+        else:
+            y_new = y
+        j+=1
+        print(str(i)+" |"+xi+" |"+str(y)+" |"+str(y_new))
+        y = y_new
 
 
 
