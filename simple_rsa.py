@@ -229,282 +229,55 @@ def e_RSA(n,e,h):
 
 def main():
 
-    # Line 124: Printing random number
-    print("line:124")
-    rand_num = 1 # b_7
-    rand_num = rand_num << 1 # Bit shift by 1 to left
-    
-    for i in range(5,0,-1):
-        rand_bit,bin_rand_num,_ = random_bit()
-
-        rand_num = rand_num + rand_bit #Adding new random bit to final random number
-        rand_num = rand_num << 1 # Bit shift by 1 to left
-
-        print("b_"+str(i)+"|"+bin_rand_num+"|"+str(rand_bit))
-    
-    rand_num = rand_num + 1 #b_0
-    print("Number|"+str(rand_num)+"|"+format(rand_num, '032b'))
+    # Generating Alice's RSA Keys
+    print("Generating Alice's RSA Keys")
+    p_Alice,q_Alice,n_Alice,e_Alice,d_Alice = generate_rsa_keys()
+    print("p = "+str(p_Alice)+", q = "+str(q_Alice)+", n = "+str(n_Alice)+", e = "+str(e_Alice)+", d = "+str(d_Alice))
+    print("p = "+format(p_Alice, '032b'))
+    print("q = "+format(q_Alice, '032b'))
+    print("n = "+format(n_Alice, '032b'))
+    print("e = "+format(e_Alice, '032b'))
+    print("d = "+format(d_Alice, '032b'))
 
 
     # Empty Line
     print()
 
 
-    #Line 139: Failed Miller-Rabin Primality Test
-    n = -1
-    a = -1
-    print("line:139")
-
-    #Finding n and a for which n is not prime
-    while True:
-        n = random_num_7bit()
-        a = get_a(n)
-        if not primality_testing(n,a):
-            break
-
-    print("n = "+str(n)+", a = "+str(a))
-    print("i |xi |z |y |y ")
-
-    #Miller-Rabin Primality Testing
-    x = n-1
-    k = len(bin(x))-3
-    y = 1
-
-    j=2
-    for i in range(k,-1,-1):
-        z = y
-        xi = bin(x)[j] # Getting xi binary number
-        y = (y*y)%n
-        #if y==1 and z!=1 and z!=n-1:
-            # Bad Square Root: n is not prime
-
-        if xi=='1':
-            y_new = (y*a)%n
-        else:
-            y_new = y
-        j+=1
-        print(str(i)+" |"+xi+" |"+str(z)+" |"+str(y)+" |"+str(y_new))
-        y = y_new
-
-    if y!=1:
-        # Bad final value
-        print(str(n)+" is not a prime because "+str(a)+"^"+str(x)+" mod "+str(n)+" != 1") #22 is not a prime because 7^21 mod 22 != 1
-    else:
-        print(str(n)+" is perhaps a prime")
-    
-
-    # Empty Line
-    print()
-
-
-    #Line 145: Passed Miller-Rabin Primality Test
-    n = -1
-    a = -1
-    print("line:145")
-
-    #Finding n and a for which n is prime
-    while True:
-        n = random_num_7bit()
-        a = get_a(n)
-        if primality_testing(n,a):
-            break
-
-    print("n = "+str(n)+", a = "+str(a))
-    print("i |xi |z |y |y ")
-
-    #Miller-Rabin Primality Testing
-    x = n-1
-    k = len(bin(x))-3
-    y = 1
-
-    j=2
-    for i in range(k,-1,-1):
-        z = y
-        xi = bin(x)[j] # Getting xi binary number
-        y = (y*y)%n
-        #if y==1 and z!=1 and z!=n-1:
-            # Bad Square Root: n is not prime
-
-        if xi=='1':
-            y_new = (y*a)%n
-        else:
-            y_new = y
-        j+=1
-        print(str(i)+" |"+xi+" |"+str(z)+" |"+str(y)+" |"+str(y_new))
-        y = y_new
-
-    if y!=1:
-        # Bad final value
-        print(str(n)+" is not a prime because "+str(a)+"^"+str(x)+" mod "+str(n)+" != 1") #22 is not a prime because 7^21 mod 22 != 1
-    else:
-        print(str(n)+" is perhaps a prime")
-
-    
-    # Empty Line
-    print()
-
-
-    #Calculating p and q
-    p = -1
-    q = -1
-    #Assigning p
-    if is_prime(n):
-        p = n
-    else: #For the case that earlier calculated prime n is not actually a prime after testing for 20 a's
-        while True:
-            n = random_num_7bit()
-            if is_prime(n):
-                p = n
-                break
-    
-    #Assigning q
-    while True:
-        n = random_num_7bit()
-        if is_prime(n):
-            q = n
-            if q != p: #Checking that p and q are not equal
-                break
-    
-    #Calculating n
-    n = p*q
-
-    #Calculating phi(n)
-    phi_n = (p-1)*(q-1)
-
-
-    # Line 162: Finding e and d
-    print("line:162")
-
-    e = 3 #Starting to check with e=3
-    d = -1
-    found_mult_inverse = False
-
-    while not found_mult_inverse:
-        print("e = "+str(e))
-        # Extended Euclidean Algorithm
-        ri = phi_n
-        ri_1 = e
-        ri_2 = -1
-
-        qi = -1
-        qi_1 = -1
-        qi_2 = -1
-
-        si = -1
-        si_1 = -1
-        si_2 = -1
-
-        ti = -1
-        ti_1 = -1
-        ti_2 = -1
-
-        i = 1
-
-        print("i |qi |r |ri+1 |ri+2 |si |ti")
-        while True:
-            if i == 1:
-                si_2 = 1
-                si = 1
-
-                ti_2 = 0
-                ti = 0
-            elif i == 2:
-                qi_1 = qi
-
-                si_1 = 0
-                si = 0
-
-                ti_1 = 1
-                ti = 1
-            else:
-                qi_2 = qi_1
-                qi_1 = qi
-
-                si = si_2 - (qi_2*si_1)
-                si_2 = si_1
-                si_1 = si
-
-                ti = ti_2 - (qi_2*ti_1)
-                ti_2 = ti_1
-                ti_1 = ti
-
-            if ri_1 == 0:
-                
-                if ri==1:
-                    found_mult_inverse = True
-                    while ti < 0: # Normalizing Multiplicative Inverse
-                        ti = ti + phi_n
-                    d = ti
-
-                print(str(i)+" |  |"+str(ri)+" |  |  |"+str(si)+" |"+str(ti))
-                break
-
-            qi = int(ri/ri_1)
-            ri_2 = ri%ri_1
-            print(str(i)+" |"+str(qi)+" |"+str(ri)+" |"+str(ri_1)+" |"+str(ri_2)+" |"+str(si)+" |"+str(ti))
-
-            i+=1
-            ri = ri_1
-            ri_1 = ri_2
-
-        if not found_mult_inverse:
-            e+=1
+    # Generating Trent's Keys
+    print("Generating Trent's RSA Keys")
+    p_Trent,q_Trent,n_Trent,e_Trent,d_Trent = generate_rsa_keys()
+    print("p = "+str(p_Trent)+", q = "+str(q_Trent)+", n = "+str(n_Trent)+", e = "+str(e_Trent)+", d = "+str(d_Trent))
+    print("p = "+format(p_Trent, '032b'))
+    print("q = "+format(q_Trent, '032b'))
+    print("n = "+format(n_Trent, '032b'))
+    print("e = "+format(e_Trent, '032b'))
+    print("d = "+format(d_Trent, '032b'))
 
 
     # Empty Line
     print()
-
-
-    # Line 173: Printing d
-    print("line:173")
-    print("d = "+str(d))
-
-
-    # Empty Line
+    print()
     print()
 
 
-    # Line 177: Printing Alice's Keys
-    print("line:177")
-    print("p = "+str(p)+", q = "+str(q)+", n = "+str(n)+", e = "+str(e)+", d = "+str(d))
-    print("p = "+format(p, '032b'))
-    print("q = "+format(q, '032b'))
-    print("n = "+format(n, '032b'))
-    print("e = "+format(e, '032b'))
-    print("d = "+format(d, '032b'))
 
-
-    # Empty Line
+    # Creating Alice's Digital Certificate signed by Trent
+    print("Creating Alice's Digital Certificate signed by Trent:")
+    print("--------------------------------------------------------")
     print()
-
-
-    # Line 185: Printing Trent's Keys
-    print("line:185")
-    pt,qt,nt,et,dt = generate_rsa_keys()
-    print("p = "+str(pt)+", q = "+str(qt)+", n = "+str(nt)+", e = "+str(et)+", d = "+str(dt))
-    print("p = "+format(pt, '032b'))
-    print("q = "+format(qt, '032b'))
-    print("n = "+format(nt, '032b'))
-    print("e = "+format(et, '032b'))
-    print("d = "+format(dt, '032b'))
-
-
-    # Empty Line
-    print()
-
 
     # Using The representation for 'Alice' = 32(Space),65(A),108(l),105(i),99(c),101(e)
     Alice = "001000000100000101101100011010010110001101100101"
     bytes_1_6 = Alice
-    bytes_7_10 = format(n, '032b')
-    bytes_11_14 = format(e, '032b')
+    bytes_7_10 = format(n_Alice, '032b')
+    bytes_11_14 = format(e_Alice, '032b')
 
     r = bytes_1_6 +bytes_7_10 + bytes_11_14
     h_r = hash_simple(r)
-    s = d_RSA(nt,dt,h_r) # Signing with Trent's Private Key (nt,dt)
+    s = d_RSA(n_Trent,d_Trent,h_r) # Signing with Trent's Private Key (nt,dt)
     
-    # Line 207 : Alice Digital Certificate
-    print("line:207")
+    print("Alice's Digital Certificate signed by Trent")
     print("r = "+r)
     print("h(r) = "+format(h_r, '032b'))
     print("s = "+format(s, '032b'))
@@ -513,17 +286,26 @@ def main():
     # Empty Line
     print()
 
-    # Line 209 : Alice Digital Certificate
-    print("line:209")
+    print("Integer Representation of Alice's Digital Certificate signed by Trent")
     print("h(r) = "+str(h_r)+", s = "+str(s))
 
 
     # Empty Line
     print()
+    print()
+    print()
 
 
-    # Line 231: Generating common u among Alice and Bob
-    k = len(bin(n)) - 3
+
+
+    # Authentication of Alice by Bob
+    print("Authentication of Alice by Bob:")
+    print("---------------------------------------------")
+    print()
+
+    # Generating common u among Alice and Bob
+    print("Generating common u among Alice and Bob")
+    k = len(bin(n_Alice)) - 3
 
     # Generating u which is cooperatively picked by Alice and Bob
     u = '1' # (k-1)th u
@@ -534,55 +316,30 @@ def main():
     u = u+'1' # 0th u
     u = int(u, 2) #Converting from binary string to binary int
 
-    print("line:231")
-    print("k = "+str(k)+", u = "+str(u))
+    h_u = hash_simple(format(u, '032b')) # Calculating h(u)
 
+    print("k = "+str(k)+", u = "+str(u)+", h(u) = "+str(h_u))
 
-    # Empty Line
-    print()
-
-
-    # Line 233: Printing binary representatioin of u
-    print("line:233")
+    # Printing binary representatioin of u
+    print("Binary representation of u and h(u)")
     print("u = ", format(u, '032b'))
-
-
-    # Empty Line
-    print()
-
-
-    # Line 239: Authentication
-    h_u = hash_simple(format(u, '032b'))
-    v = d_RSA(n,d,h_u) # Alice signing/decrypting h(u)
-    Ev = e_RSA(n,e,v) # Bob verifying Ev is equal to h(u) to authenticate Alice
-
-    print("line:239")
-    print("u = "+str(u)+", h(u) = "+str(h_u)+", v = "+str(v)+", Ev = "+str(Ev))
-
+    print("h(u) = ", format(h_u, '032b'))
 
     # Empty Line
     print()
 
+    # Authentication of Alice by Bob
+    print("Alice signing shared h(u)")
+    v = d_RSA(n_Alice,d_Alice,h_u) # Alice signing/decrypting h(u)
+    print("u = "+str(u)+", h(u) = "+str(h_u)+", v = "+str(v))
+    print()
 
-    # Line 242: Fast Exponentiation for computing E(e,v)
-    print("line:242")
+    print("Bob authenticating Alice")
+    Ev = e_RSA(n_Alice,e_Alice,v) # Bob verifying Ev is equal to h(u) to authenticate Alice
 
-    # Fast Exponentiation
-    k = len(bin(e))-3
-    y = 1
-
-    j=2
-    print("i |xi |y |y ")
-    for i in range(k,-1,-1):
-        xi = bin(e)[j] # Getting xi binary number
-        y = (y*y)%n
-        if xi=='1':
-            y_new = (y*v)%n
-        else:
-            y_new = y
-        j+=1
-        print(str(i)+" |"+xi+" |"+str(y)+" |"+str(y_new))
-        y = y_new
+    print("h(u) = "+str(h_u)+", v = "+str(v)+", Ev = "+str(Ev))
+    print("Ev = h(u)")
+    print("Alice authenticated by Bob!!")
 
 
 
