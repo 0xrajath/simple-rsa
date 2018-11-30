@@ -218,7 +218,7 @@ def hash_simple(bit_string):
 
 
 # Decrypting or Signing 'h' with Private Key (n,d)
-def sign_w_priv_key(n,d,h):
+def d_RSA(n,d,h):
     return fast_exponentiation(n,h,d)
 
 
@@ -496,7 +496,7 @@ def main():
 
     r = bytes_1_6 +bytes_7_10 + bytes_11_14
     h_r = hash_simple(r)
-    s = sign_w_priv_key(nt,dt,h_r) # Signing with Trent's Private Key (nt,dt)
+    s = d_RSA(nt,dt,h_r) # Signing with Trent's Private Key (nt,dt)
     
     # Line 207 : Alice Digital Certificate
     print("line:207")
@@ -512,6 +512,41 @@ def main():
     print("line:209")
     print("h(r) = "+str(h_r)+", s = "+str(s))
 
+
+    # Empty Line
+    print()
+
+
+    # Line 231: Generating common u among Alice and Bob
+    k = len(bin(n)) - 3
+
+    # Generating u which is cooperatively picked by Alice and Bob
+    u = '1' # (k-1)th u
+    for i in range(k-2):
+        rand_bit,_,_ = random_bit()
+        u = u+str(rand_bit)
+    
+    u = u+'1' # 0th u
+    u = int(u, 2) #Converting from binary string to binary int
+
+    print("line:231")
+    print("k = "+str(k)+", u = "+str(u))
+
+
+    # Empty Line
+    print()
+
+
+    # Line 233: Printing binary representatioin of u
+    print("line:233")
+    print("u = ", format(u, '032b'))
+
+
+    # Empty Line
+    print()
+
+
+    
 
 
 
