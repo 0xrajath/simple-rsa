@@ -222,6 +222,11 @@ def d_RSA(n,d,h):
     return fast_exponentiation(n,h,d)
 
 
+# Encrypting or Verifying 'h' with Public Key (n,e)
+def e_RSA(n,e,h):
+    return fast_exponentiation(n,h,e)
+
+
 def main():
 
     # Line 124: Printing random number
@@ -546,7 +551,21 @@ def main():
     print()
 
 
+    # Line 239: Authentication
+    h_u = hash_simple(format(u, '032b'))
+    v = d_RSA(n,d,h_u) # Alice signing/decrypting h(u)
+    Ev = e_RSA(n,e,v) # Bob verifying Ev is equal to h(u) to authenticate Alice
+
+    print("line:239")
+    print("u = "+str(u)+", h(u) = "+str(h_u)+", v = "+str(v)+", Ev = "+str(Ev))
+
+
+    # Empty Line
+    print()
+
+
     
+
 
 
 
